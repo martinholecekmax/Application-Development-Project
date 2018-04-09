@@ -14,11 +14,11 @@
   </div>
   <div class="form-group">
       <label for="start_date">Start date</label>
-      <input type="start_date" id="start_date" name="start_date" class="form-control" v-model="start_date">
+      <date-picker v-model="start_date" type="datetime" format="yyyy-MM-dd HH:mm:ss" :first-day-of-week="1" lang="en"></date-picker>
   </div>
-  <div class="form-group">
+  <div class="form-group" v-if="!all_day">
       <label for="end_date">End date</label>
-      <input type="end_date" id="end_date" name="end_date" class="form-control" v-model="end_date">
+      <date-picker v-model="end_date" type="datetime" format="yyyy-MM-dd HH:mm:ss" :first-day-of-week="1" lang="en"></date-picker>
   </div>  
   <div class="form-group">
     <input type="checkbox" id="checkbox" v-model="all_day">
@@ -30,8 +30,11 @@
 
 <script>
 import axios from "axios";
+import DatePicker from "vue2-datepicker";
+import moment from "moment";
 
 export default {
+  components: { DatePicker },
   data() {
     return {
       events: [],
@@ -40,12 +43,22 @@ export default {
       location: "",
       start_date: "",
       end_date: "",
-      all_day: false
+      all_day: false,
+      shortcuts: [
+        {
+          text: "Today",
+          start: new Date(),
+          end: new Date()
+        }
+      ]
     };
   },
   methods: {
     signin() {
       const token = localStorage.getItem("token");
+      if (this.all_day) {
+        this.end_date = this.start_date;
+      }
       axios
         .post(
           "/jwt/public/api/event?token=" + token,
@@ -53,8 +66,8 @@ export default {
             title: this.title,
             description: this.description,
             location: this.location,
-            start_date: "1992-12-10 04:06:36",
-            end_date: "1992-12-10 04:06:36",
+            start_date: moment(this.start_date).format("YYYY-MM-DD HH:mm:ss"),
+            end_date: moment(this.end_date).format("YYYY-MM-DD HH:mm:ss"),
             all_day: this.all_day
           },
           {

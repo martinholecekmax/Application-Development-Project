@@ -29,6 +29,11 @@ Route::put('event/{id}', [
     'uses' => 'EventController@update'
 ]);
 
+// Update Event
+Route::patch('event/{id}', [
+    'uses' => 'EventController@replace'
+]);
+
 // Delete Event
 Route::delete('event/{id}', [
     'uses' => 'EventController@destroy'

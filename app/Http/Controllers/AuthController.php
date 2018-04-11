@@ -49,7 +49,7 @@ class AuthController extends Controller
 
         if (!$token = auth()->attempt($credentials)) {
             return response()->json([
-                'error' => 'Unauthorized'
+                'error' => 'Unauthorized User!'
             ], 401);
         }
 
@@ -76,7 +76,7 @@ class AuthController extends Controller
         auth()->logout();
 
         return response()->json([
-            'message' => 'Successfully logged out'
+            'message' => 'Successfully logged out!'
         ]);
     }
 

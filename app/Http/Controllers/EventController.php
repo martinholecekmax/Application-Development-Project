@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Http\Resources\EventResource;
-use JWTAuth;
 use App\Event;
+use JWTAuth;
 
 class EventController extends Controller
 {
@@ -54,6 +54,15 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
+        $this->validate($request, [
+            'title' => 'required',
+            'description' => 'required',
+            'location' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'all_day' => 'required',
+        ]);
+
         $user = JWTAuth::parseToken()->toUser();
         $event = new Event();
         $event->title = $request->input('title');
@@ -100,6 +109,15 @@ class EventController extends Controller
      */
     public function update(Request $request, $id)
     {
+        $this->validate($request, [
+            'title' => 'required',
+            'description' => 'required',
+            'location' => 'required',
+            'start_date' => 'required',
+            'end_date' => 'required',
+            'all_day' => 'required',
+        ]);
+
         $user = JWTAuth::parseToken()->toUser();
         $event = Event::findOrFail($id);
         $event->title = $request->input('title');
@@ -109,6 +127,24 @@ class EventController extends Controller
         $event->end_date = $request->input('end_date');
         $event->all_day = $request->input('all_day');
         $event->user_id = $user->id;
+        if ($event->save()) {
+            return new EventResource($event);
+        }
+    }
+
+    /**
+     * Replace specific field of the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function replace(Request $request, $id)
+    {
+        $user = JWTAuth::parseToken()->toUser();
+        $event = Event::findOrFail($id);
+        $input = $request->all();
+        $event->fill($input);
         if ($event->save()) {
             return new EventResource($event);
         }

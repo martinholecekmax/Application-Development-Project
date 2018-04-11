@@ -1,5 +1,5 @@
 <template>
-<form>
+<form id="login" method="get" action="/jwt/public/">
   <div class="form-group">
       <label for="email">Email</label>
       <input type="email" id="email" name="email" class="form-control" v-model="email">
@@ -44,6 +44,10 @@ export default {
           const base64 = base64Url.replace("-", "+").replace("_", "/");
           console.log(JSON.parse(window.atob(base64)));
           localStorage.setItem("token", token);
+
+          var $form = $("#login");
+
+          $form.get(0).submit();
         })
         .catch(error => console.log(error));
     }

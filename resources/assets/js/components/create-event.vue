@@ -31,8 +31,6 @@
                   <date-picker class="float-right" v-model="end_date" :first-day-of-week="1" lang="en"></date-picker>
                 </div>
                 <div class="form-group">
-                  <!-- <timepicker :time-selected="time"></timepicker> -->
-                  {{time}}
                 </div>
                 <div class="form-group mb-0">
                   <input type="checkbox" id="checkbox" v-model="all_day">
@@ -56,15 +54,12 @@
 import DatePicker from "vue2-datepicker";
 import moment from "moment";
 
-import TimePicker from "./timepicker";
-
 import { EventBus } from "../app";
 
 export default {
-  components: { DatePicker, timepicker: TimePicker },
+  components: { DatePicker },
   data() {
     return {
-      time: "",
       showModal: false,
       event: {},
       title: "",
@@ -124,7 +119,7 @@ export default {
           // this.$router.push({ path: "/" });
           EventBus.$emit("eventCreated", {
             message: "Event Created",
-            event: this.event
+            event: response.data
           });
           this.showModal = false;
         })

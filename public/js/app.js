@@ -66734,6 +66734,8 @@ module.exports = function listToStyles (parentId, list) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jwt_decode__ = __webpack_require__(197);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_jwt_decode___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_jwt_decode__);
 //
 //
 //
@@ -66765,6 +66767,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+
+
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
@@ -66784,7 +66788,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
     inspectToken: function inspectToken() {
       var token = localStorage.getItem("token");
       if (token) {
-        var decoded = jwt_decode(token);
+        var decoded = __WEBPACK_IMPORTED_MODULE_0_jwt_decode___default()(token);
         var exp = decoded.exp;
         var orig_iat = decoded.iat;
         var seven_days = 604800; // 7*24*60*60
@@ -66801,17 +66805,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         console.log("token ok");
       } else {
         // NO TOKEN SET THEN CLEAR LOCAL STORAGE
-        localStorage.clear();
       }
     },
     isUserLogin: function isUserLogin() {
-      this.refreshToken();
       this.inspectToken();
       return localStorage.getItem("token");
     },
     refreshToken: function refreshToken() {
       var _this = this;
 
+      var token = localStorage.getItem("token");
       axios.post("/refresh?token=" + token).then(function (response) {
         console.log("Refresh token");
         console.log(_this.response);
@@ -67123,6 +67126,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       $("#message").fadeIn();
       $("#message").fadeOut(2000);
     });
+    __WEBPACK_IMPORTED_MODULE_5__app__["EventBus"].$on("eventDeleted", function (data) {
+      _this.showMessage(data.message);
+      $("#message").fadeIn();
+      $("#message").fadeOut(2000);
+      var index = _this.events.findIndex(function (el) {
+        return el.id == data.event.id;
+      });
+      _this.events.splice(index, 1);
+    });
   },
 
   mounted: function mounted() {
@@ -67150,20 +67162,18 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
         if (Date.now() / 1000 > exp) {
           // IF TOKEN EXPIRED THEN SEND TO LOGIN PAGE
-          console.log("redirect to login a");
+          console.log("IF TOKEN EXPIRED THEN SEND TO LOGIN PAGE");
           localStorage.clear();
           this.$router.push({ path: "/signin" });
         } else if (Date.now() / 1000 > exp - thirty_minutes && Date.now() / 1000 < orig_iat + seven_days) {
-          console.log("refresh token");
-          localStorage.clear();
           // IF TOKEN EXPIRE IN LESS THAN 30MN BUT STILL IN REFRESH PERIOD THEN REFRESH
+          console.log("Refresh token");
+          localStorage.clear();
         }
         console.log("token ok");
       } else {
         // NO TOKEN THEN SEND TO LOGIN PAGE
-        console.log("redirect to login b");
-        // Delete token
-        localStorage.clear();
+        console.log("NO TOKEN THEN SEND TO LOGIN PAGE");
         this.$router.push({ path: "/signin" });
       }
     },
@@ -67650,7 +67660,7 @@ exports = module.exports = __webpack_require__(5)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/**\r\n*   Modal Box\r\n*/\n.modal-mask {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  -webkit-transition: opacity 0.3s ease;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.modal-container {\r\n  width: 300px;\r\n  margin: 0px auto;\r\n  padding: 20px 30px;\r\n  background-color: #fff;\r\n  border-radius: 10px;\r\n  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  -webkit-transition: all 0.3s ease;\r\n  transition: all 0.3s ease;\r\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3 {\r\n  margin-top: 0;\r\n  color: #42b983;\n}\n.modal-body {\r\n  margin: 0px 10px 0 10px;\n}\n.modal-default-button {\r\n  float: right;\n}\r\n\r\n/*\r\n* The following styles are auto-applied to elements with\r\n* transition=\"modal\" when their visibility is toggled\r\n* by Vue.js.\r\n*\r\n*/\n.modal-enter {\r\n  opacity: 0;\n}\n.modal-leave-active {\r\n  opacity: 0;\n}\n.modal-enter .modal-container,\r\n.modal-leave-active .modal-container {\r\n  -webkit-transform: scale(1.1);\r\n  transform: scale(1.1);\n}\r\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\r\n/**\r\n*   Modal Box\r\n*/\n.modal-mask {\r\n  position: fixed;\r\n  z-index: 9998;\r\n  top: 0;\r\n  left: 0;\r\n  width: 100%;\r\n  height: 100%;\r\n  background-color: rgba(0, 0, 0, 0.5);\r\n  display: table;\r\n  -webkit-transition: opacity 0.3s ease;\r\n  transition: opacity 0.3s ease;\n}\n.modal-wrapper {\r\n  display: table-cell;\r\n  vertical-align: middle;\n}\n.modal-container {\r\n  width: 300px;\r\n  margin: 0px auto;\r\n  padding: 20px 30px;\r\n  background-color: #fff;\r\n  border-radius: 10px;\r\n  -webkit-box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);\r\n  -webkit-transition: all 0.3s ease;\r\n  transition: all 0.3s ease;\r\n  font-family: Helvetica, Arial, sans-serif;\n}\n.modal-header h3 {\r\n  margin-top: 0;\r\n  color: #42b983;\n}\n.modal-body {\r\n  margin: 0px 10px 0 10px;\n}\n.modal-default-button {\r\n  float: right;\n}\r\n\r\n/*\r\n* The following styles are auto-applied to elements with\r\n* transition=\"modal\" when their visibility is toggled\r\n* by Vue.js.\r\n*\r\n*/\n.modal-enter {\r\n  opacity: 0;\n}\n.modal-leave-active {\r\n  opacity: 0;\n}\n.modal-enter .modal-container,\r\n.modal-leave-active .modal-container {\r\n  -webkit-transform: scale(1.1);\r\n  transform: scale(1.1);\n}\r\n", ""]);
 
 // exports
 
@@ -67665,9 +67675,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue2_datepicker___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0_vue2_datepicker__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_moment___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_moment__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__timepicker__ = __webpack_require__(184);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__timepicker___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2__timepicker__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__app__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__app__ = __webpack_require__(3);
 //
 //
 //
@@ -67720,10 +67728,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
-//
-//
-
-
 
 
 
@@ -67731,10 +67735,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
-  components: { DatePicker: __WEBPACK_IMPORTED_MODULE_0_vue2_datepicker___default.a, timepicker: __WEBPACK_IMPORTED_MODULE_2__timepicker___default.a },
+  components: { DatePicker: __WEBPACK_IMPORTED_MODULE_0_vue2_datepicker___default.a },
   data: function data() {
     return {
-      time: "",
       showModal: false,
       event: {},
       title: "",
@@ -67753,7 +67756,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
   created: function created() {
     var _this = this;
 
-    __WEBPACK_IMPORTED_MODULE_3__app__["EventBus"].$on("createEventButton", function (data) {
+    __WEBPACK_IMPORTED_MODULE_2__app__["EventBus"].$on("createEventButton", function (data) {
       _this.showModal = true;
     });
   },
@@ -67792,9 +67795,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       }).then(function (response) {
         console.log(response);
         // this.$router.push({ path: "/" });
-        __WEBPACK_IMPORTED_MODULE_3__app__["EventBus"].$emit("eventCreated", {
+        __WEBPACK_IMPORTED_MODULE_2__app__["EventBus"].$emit("eventCreated", {
           message: "Event Created",
-          event: _this2.event
+          event: response.data
         });
         _this2.showModal = false;
       }).catch(function (error) {
@@ -67805,155 +67808,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 });
 
 /***/ }),
-/* 184 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var disposed = false
-var normalizeComponent = __webpack_require__(2)
-/* script */
-var __vue_script__ = __webpack_require__(185)
-/* template */
-var __vue_template__ = __webpack_require__(186)
-/* template functional */
-var __vue_template_functional__ = false
-/* styles */
-var __vue_styles__ = null
-/* scopeId */
-var __vue_scopeId__ = null
-/* moduleIdentifier (server only) */
-var __vue_module_identifier__ = null
-var Component = normalizeComponent(
-  __vue_script__,
-  __vue_template__,
-  __vue_template_functional__,
-  __vue_styles__,
-  __vue_scopeId__,
-  __vue_module_identifier__
-)
-Component.options.__file = "resources\\assets\\js\\components\\timepicker.vue"
-
-/* hot reload */
-if (false) {(function () {
-  var hotAPI = require("vue-hot-reload-api")
-  hotAPI.install(require("vue"), false)
-  if (!hotAPI.compatible) return
-  module.hot.accept()
-  if (!module.hot.data) {
-    hotAPI.createRecord("data-v-778e329c", Component.options)
-  } else {
-    hotAPI.reload("data-v-778e329c", Component.options)
-  }
-  module.hot.dispose(function (data) {
-    disposed = true
-  })
-})()}
-
-module.exports = Component.exports
-
-
-/***/ }),
-/* 185 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-//
-//
-//
-//
-//
-//
-//
-//
-//
-
-/* harmony default export */ __webpack_exports__["default"] = ({
-  props: ["timeSelected"],
-  data: function data() {
-    return {
-      time: []
-    };
-  },
-
-  mounted: function mounted() {
-    this.time = [];
-    var minute = void 0;
-    var day = 24;
-    for (var hour = 0; hour < day; hour++) {
-      for (var min = 0; min < 2; min++) {
-        if (min == 0) {
-          minute = "00";
-        } else {
-          minute = "30";
-        }
-        this.time.push(hour + ":" + minute);
-      }
-    }
-    console.log(this.time);
-  },
-  methods: {}
-});
-
-/***/ }),
-/* 186 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var render = function() {
-  var _vm = this
-  var _h = _vm.$createElement
-  var _c = _vm._self._c || _h
-  return _c("div", [
-    _c(
-      "select",
-      {
-        directives: [
-          {
-            name: "model",
-            rawName: "v-model",
-            value: _vm.timeSelected,
-            expression: "timeSelected"
-          }
-        ],
-        on: {
-          change: function($event) {
-            var $$selectedVal = Array.prototype.filter
-              .call($event.target.options, function(o) {
-                return o.selected
-              })
-              .map(function(o) {
-                var val = "_value" in o ? o._value : o.value
-                return val
-              })
-            _vm.timeSelected = $event.target.multiple
-              ? $$selectedVal
-              : $$selectedVal[0]
-          }
-        }
-      },
-      [
-        _c("option", { attrs: { value: "null", disabled: "" } }, [
-          _vm._v("Select Time")
-        ]),
-        _vm._v(" "),
-        _vm._l(_vm.time, function(t) {
-          return _c("option", { key: t }, [_vm._v(_vm._s(t))])
-        })
-      ],
-      2
-    )
-  ])
-}
-var staticRenderFns = []
-render._withStripped = true
-module.exports = { render: render, staticRenderFns: staticRenderFns }
-if (false) {
-  module.hot.accept()
-  if (module.hot.data) {
-    require("vue-hot-reload-api")      .rerender("data-v-778e329c", module.exports)
-  }
-}
-
-/***/ }),
+/* 184 */,
+/* 185 */,
+/* 186 */,
 /* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -68120,13 +67977,7 @@ var render = function() {
                           1
                         ),
                         _vm._v(" "),
-                        _c("div", { staticClass: "form-group" }, [
-                          _vm._v(
-                            "\r\n                  " +
-                              _vm._s(_vm.time) +
-                              "\r\n                "
-                          )
-                        ]),
+                        _c("div", { staticClass: "form-group" }),
                         _vm._v(" "),
                         _c("div", { staticClass: "form-group mb-0" }, [
                           _c("input", {
@@ -68762,7 +68613,7 @@ exports = module.exports = __webpack_require__(5)(false);
 
 
 // module
-exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
+exports.push([module.i, "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n", ""]);
 
 // exports
 
@@ -68837,6 +68688,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
       __WEBPACK_IMPORTED_MODULE_2__app__["EventBus"].$emit("editEventButton", {
         event: event
       });
+    },
+    deleteEvent: function deleteEvent(event) {
+      var _this = this;
+
+      var token = localStorage.getItem("token");
+      axios.delete("/event/" + event.id + "?token=" + token).then(function (response) {
+        console.log(response);
+        // this.$router.push({ path: "/" });
+        __WEBPACK_IMPORTED_MODULE_2__app__["EventBus"].$emit("eventDeleted", {
+          message: "Event Deleted",
+          event: _this.event
+        });
+      }).catch(function (error) {
+        return console.log(error);
+      });
     }
   }
 });
@@ -68904,10 +68770,14 @@ var render = function() {
             _c("hr"),
             _vm._v(" "),
             _c(
-              "a",
+              "button",
               {
                 staticClass: "btn btn-danger float-right ml-3",
-                attrs: { href: "#" }
+                on: {
+                  click: function($event) {
+                    _vm.deleteEvent(_vm.event)
+                  }
+                }
               },
               [_vm._v("Delete")]
             ),

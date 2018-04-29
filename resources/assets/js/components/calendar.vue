@@ -89,6 +89,13 @@ export default {
       $("#message").fadeIn();
       $("#message").fadeOut(2000);
     });
+    EventBus.$on("eventDeleted", data => {
+      this.showMessage(data.message);
+      $("#message").fadeIn();
+      $("#message").fadeOut(2000);
+      var index = this.events.findIndex(el => el.id == data.event.id);
+      this.events.splice(index, 1);
+    });
   },
   mounted: function() {
     this.auth();
@@ -115,23 +122,21 @@ export default {
 
         if (Date.now() / 1000 > exp) {
           // IF TOKEN EXPIRED THEN SEND TO LOGIN PAGE
-          console.log("redirect to login a");
+          console.log("IF TOKEN EXPIRED THEN SEND TO LOGIN PAGE");
           localStorage.clear();
           this.$router.push({ path: "/signin" });
         } else if (
           Date.now() / 1000 > exp - thirty_minutes &&
           Date.now() / 1000 < orig_iat + seven_days
         ) {
-          console.log("refresh token");
-          localStorage.clear();
           // IF TOKEN EXPIRE IN LESS THAN 30MN BUT STILL IN REFRESH PERIOD THEN REFRESH
+          console.log("Refresh token");
+          localStorage.clear();
         }
         console.log("token ok");
       } else {
         // NO TOKEN THEN SEND TO LOGIN PAGE
-        console.log("redirect to login b");
-        // Delete token
-        localStorage.clear();
+        console.log("NO TOKEN THEN SEND TO LOGIN PAGE");
         this.$router.push({ path: "/signin" });
       }
     },

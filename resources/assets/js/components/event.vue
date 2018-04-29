@@ -22,7 +22,7 @@
           All Day: {{ event.all_day }}
         </div>
         <hr>
-        <a href="#" class="btn btn-danger float-right ml-3">Delete</a>
+        <button class="btn btn-danger float-right ml-3" v-on:click="deleteEvent(event)">Delete</button>
         <button class="btn btn-primary float-right" v-on:click="editModal(event)">Update</button>
       </div>
     </div>
@@ -56,6 +56,20 @@ export default {
       EventBus.$emit("editEventButton", {
         event: event
       });
+    },
+    deleteEvent(event) {
+      const token = localStorage.getItem("token");
+      axios
+        .delete("/event/" + event.id + "?token=" + token)
+        .then(response => {
+          console.log(response);
+          // this.$router.push({ path: "/" });
+          EventBus.$emit("eventDeleted", {
+            message: "Event Deleted",
+            event: this.event
+          });
+        })
+        .catch(error => console.log(error));
     }
   }
 };

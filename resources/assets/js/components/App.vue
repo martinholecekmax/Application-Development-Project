@@ -30,6 +30,8 @@
 </template>
 
 <script>
+import jwt_decode from "jwt-decode";
+
 export default {
   data() {
     return {};
@@ -67,15 +69,14 @@ export default {
         console.log("token ok");
       } else {
         // NO TOKEN SET THEN CLEAR LOCAL STORAGE
-        localStorage.clear();
       }
     },
     isUserLogin() {
-      this.refreshToken();
       this.inspectToken();
       return localStorage.getItem("token");
     },
     refreshToken() {
+      const token = localStorage.getItem("token");
       axios
         .post("/refresh?token=" + token)
         .then(response => {

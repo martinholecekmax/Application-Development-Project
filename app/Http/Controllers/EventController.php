@@ -62,7 +62,7 @@ class EventController extends Controller
         $event->all_day = $request->input('all_day');
         $event->user_id = $user->id;
         if ($event->save()) {
-            return new EventResource($event);
+            return $event;
         }
     }
 
@@ -75,7 +75,7 @@ class EventController extends Controller
     public function show($id)
     {
         $event = Event::findOrFail($id);
-        return new EventResource($event);
+        return $event;
     }
 
     /**
@@ -106,7 +106,7 @@ class EventController extends Controller
         $event->all_day = $request->input('all_day');
         $event->user_id = $user->id;
         if ($event->save()) {
-            return new EventResource($event);
+            return $event;
         }
     }
 
@@ -124,7 +124,7 @@ class EventController extends Controller
         $input = $request->all();
         $event->fill($input);
         if ($event->save()) {
-            return new EventResource($event);
+            return $event;
         }
     }
 
@@ -138,7 +138,7 @@ class EventController extends Controller
     {
         $event = Event::findOrFail($id);
         if ($event->delete()) {
-            return new EventResource($event);
+            return $event;
         }
     }
 }

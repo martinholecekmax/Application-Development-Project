@@ -1,5 +1,6 @@
 <template>
   <div>
+    {{timeSelected}}
       <select v-model="timeSelected">
           <option value="null" disabled>Select Time</option>
           <option v-for="t in time" v-bind:key="t">{{ t }}</option>

@@ -17,8 +17,6 @@
 </template>
 
 <script>
-import axios from "axios";
-
 export default {
   data() {
     return {
@@ -30,20 +28,15 @@ export default {
   methods: {
     signup() {
       axios
-        .post(
-          "/jwt/public/api/signup",
-          {
-            name: this.username,
-            email: this.email,
-            password: this.password
-          },
-          {
-            headers: {
-              "X-Requested-With": "XMLHttpRequest"
-            }
-          }
-        )
-        .then(response => console.log(response))
+        .post("/signup", {
+          name: this.username,
+          email: this.email,
+          password: this.password
+        })
+        .then(response => {
+          console.log(response);
+          this.$router.push({ path: "/signin" });
+        })
         .catch(error => console.log(error));
     }
   }

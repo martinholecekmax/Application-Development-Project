@@ -31,7 +31,9 @@
 
 <body>
     {{-- Insert Navbar --}}
-    @include('inc.navbar') {{-- Display Error Messages --}}
+    <!-- @include('inc.navbar')  -->
+
+    {{-- Display Error Messages --}}
     @include('inc.messages') {{-- Insert Content
     --}} @yield('content') {{-- Insert additional scripts --}} @yield('scripts')
 </body>

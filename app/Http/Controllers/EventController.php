@@ -19,7 +19,6 @@ class EventController extends Controller
         $this->middleware('jwt', ['except' => ['login']]);
     }
 
-
     /**
      * Display a listing of the resource.
      *
@@ -37,16 +36,6 @@ class EventController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -58,9 +47,9 @@ class EventController extends Controller
             'title' => 'required',
             'description' => 'required',
             'location' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'all_day' => 'required',
+            'start_date' => 'required|date_format:Y-m-d H:i:s',
+            'end_date' => 'required|date_format:Y-m-d H:i:s',
+            'all_day' => 'accepted',
         ]);
 
         $user = JWTAuth::parseToken()->toUser();
@@ -90,17 +79,6 @@ class EventController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -113,9 +91,9 @@ class EventController extends Controller
             'title' => 'required',
             'description' => 'required',
             'location' => 'required',
-            'start_date' => 'required',
-            'end_date' => 'required',
-            'all_day' => 'required',
+            'start_date' => 'required|date_format:Y-m-d H:i:s',
+            'end_date' => 'required|date_format:Y-m-d H:i:s',
+            'all_day' => 'boolean',
         ]);
 
         $user = JWTAuth::parseToken()->toUser();

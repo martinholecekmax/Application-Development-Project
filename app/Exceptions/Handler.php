@@ -70,7 +70,7 @@ class Handler extends ExceptionHandler
             // If the model is not in database
             return response()->json(['error' => 'Model not found!'], 404);
         } else {
-           // return response()->json(['error' => 'Internal Server Error!'], 500);
+        //    return response()->json(['error' => 'Internal Server Error!'], 500);
         }
         return parent::render($request, $exception); // Used only for websites
     }

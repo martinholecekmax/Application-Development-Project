@@ -8,65 +8,63 @@
             <div class="modal-header">
               <h4 class="modal-title">Create Event</h4>
             </div>
-              <form>
             <div class="modal-body">
-                <div class="form-group">
-                  <label for="title">Title</label>
-                  <input type="title" id="title" name="title" class="form-control" v-model="title">
-                </div>
-                <div class="form-group">
-                  <label for="description">Description</label>
-                  <input type="description" id="description" name="description" class="form-control" v-model="description">
-                </div>
-                <div class="form-group">
-                  <label for="location">Location</label>
-                  <input type="location" id="location" name="location" class="form-control" v-model="location">
-                </div>
-
-                <div class="form-group">
-                  <div class="form-row">
-                    <div class="col">
-                      <label for="start_date">Start date</label>
-                    </div>
-                    <div class="col">
-                      <date-picker class="" v-model="start_date" :first-day-of-week="1" lang="en"></date-picker>
-                    </div>
-                    <div class="col">
-                    <select v-model="start_time" :disabled="all_day" class="custom-select time-select">
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input type="title" id="title" name="title" class="form-control" :class="{error: errors.has('title')}" v-model="title" v-validate="'required'">
+                <span class="text-danger" v-show="errors.has('title')">{{errors.first('title')}}</span>
+              </div>
+              <div class="form-group">
+                <label for="description">Description</label>
+                <input type="description" id="description" name="description" class="form-control" :class="{error: errors.has('description')}" v-model="description" v-validate="'required'">
+                <span class="text-danger" v-show="errors.has('description')">{{errors.first('description')}}</span>
+              </div>
+              <div class="form-group">
+                <label for="location">Location</label>
+                <input type="location" id="location" name="location" class="form-control" :class="{error: errors.has('location')}" v-model="location" v-validate="'required'">
+                <span class="text-danger" v-show="errors.has('location')">{{errors.first('location')}}</span>
+              </div>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col">
+                    <label for="start_date">Start date</label>
+                  </div>
+                  <div class="col">
+                    <date-picker :class="{errordate: errors.has('startdate')}" v-model="start_date" :first-day-of-week="1" lang="en"></date-picker>
+                  </div>
+                  <div class="col">
+                    <select v-model="start_time" :disabled="all_day" class="custom-select time-select" :class="{error: errors.has('starttime')}">
                         <option :value="null" disabled>Select Time</option>
                         <option v-for="t in time" v-bind:key="t">{{ t }}</option>
                     </select>
-                    </div>
                   </div>
                 </div>
-                <div class="form-group">
-                  <div class="form-row">
-                    <div class="col">
-                      <label for="end_date">End date</label>
-                    </div>
-                    <div class="col">
-                      <date-picker class="float-right" v-model="end_date" :first-day-of-week="1" lang="en"></date-picker>
-                    </div>
-                    <div class="col">
-                      <select v-model="end_time" :disabled="all_day" class="custom-select time-select">
-                          <option :value="null" disabled>Select Time</option>
-                          <option v-for="t in time" v-bind:key="t">{{ t }}</option>
-                      </select>
-                    </div>
+              </div>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col">
+                    <label for="end_date">End date</label>
+                  </div>
+                  <div class="col">
+                    <date-picker :class="{errordate: errors.has('enddate')}" v-model="end_date" :first-day-of-week="1" lang="en"></date-picker>
+                  </div>
+                  <div class="col">
+                    <select v-model="end_time" :disabled="all_day" class="custom-select time-select" :class="{error: errors.has('endtime')}">
+                        <option :value="null" disabled>Select Time</option>
+                        <option v-for="t in time" v-bind:key="t">{{ t }}</option>
+                    </select>
                   </div>
                 </div>
-
-                <div class="form-group mb-0">
-                  <input type="checkbox" id="checkbox" v-model="all_day">
-                  <label for="checkbox">All Day</label>
-                </div>
-
+              </div>
+              <div class="form-group mb-0">
+                <input type="checkbox" id="checkbox" v-model="all_day">
+                <label for="checkbox">All Day</label>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary mr-2" @click.prevent="createEvent">Create Event</button>
               <button class="btn btn-outline-secondary" v-on:click.prevent="showModal = false">Cancel</button>
             </div>
-              </form>
           </div>
         </div>
       </div>
@@ -105,6 +103,14 @@ export default {
   },
   created() {
     EventBus.$on("createEventButton", data => {
+      this.initModal();
+    });
+  },
+  mounted: function() {
+    this.initSelectBoxTime();
+  },
+  methods: {
+    initModal() {
       this.showModal = true;
       this.title = null;
       this.description = null;
@@ -114,28 +120,17 @@ export default {
       this.start_time = null;
       this.end_time = null;
       this.all_day = false;
-    });
-  },
-  mounted: function() {
-    this.auth();
-    this.initSelectBoxTime();
-  },
-  methods: {
+      this.errors.clear();
+    },
     initSelectBoxTime() {
       this.time = [];
       let date = moment();
-
       var time = moment().startOf("day");
       var end = time.clone().endOf("day");
 
       while (time < end) {
         this.time.push(time.format("HH:mm").toString());
         time.add(30, "minutes");
-      }
-    },
-    auth() {
-      if (localStorage.getItem("token") === null) {
-        this.$router.push({ path: "/signin" });
       }
     },
     setTime(time, date) {
@@ -148,27 +143,69 @@ export default {
       }
       return new Date(date).setHours(hours, min, 0);
     },
-    createEvent() {
-      const token = localStorage.getItem("token");
-
-      let startDate;
-      let endDate;
-
+    setDates() {
       if (this.all_day) {
-        startDate = this.setTime(null, this.start_date);
-        endDate = this.setTime(null, this.end_date);
+        this.start_date = this.setTime(null, this.start_date);
+        this.end_date = this.setTime(null, this.end_date);
       } else {
-        startDate = this.setTime(this.start_time, this.start_date);
-        endDate = this.setTime(this.end_time, this.end_date);
+        this.start_date = this.setTime(this.start_time, this.start_date);
+        this.end_date = this.setTime(this.end_time, this.end_date);
       }
+    },
+    createEvent() {
+      if (this.validation()) {
+        this.setDates();
+      }
+      this.$validator.validateAll().then(success => {
+        if (success) {
+          this.sendEvent();
+        }
+      });
+    },
+    validation() {
+      let validate = true;
+      if (this.start_date == null) {
+        this.errors.add("startdate", "Start date is requred");
+        validate = false;
+      } else {
+        this.errors.remove("startdate");
+      }
+
+      if (this.start_time == null) {
+        this.errors.add("starttime", "Start time is requred");
+        validate = false;
+      } else {
+        this.errors.remove("starttime");
+      }
+
+      if (this.end_date == null) {
+        this.errors.add("enddate", "End date is requred");
+        validate = false;
+      } else {
+        this.errors.remove("enddate");
+      }
+
+      if (this.end_time == null) {
+        this.errors.add("endtime", "End time is requred");
+        validate = false;
+      } else {
+        this.errors.remove("endtime");
+      }
+
+      return validate;
+    },
+    sendEvent() {
+      const token = this.$store.state.token;
+      let start_date = moment(this.start_date).format("YYYY-MM-DD HH:mm:ss");
+      let end_date = moment(this.end_date).format("YYYY-MM-DD HH:mm:ss");
 
       axios
         .post("/event?token=" + token, {
           title: this.title,
           description: this.description,
           location: this.location,
-          start_date: moment(startDate).format("YYYY-MM-DD HH:mm:ss"),
-          end_date: moment(endDate).format("YYYY-MM-DD HH:mm:ss"),
+          start_date: start_date,
+          end_date: end_date,
           all_day: this.all_day
         })
         .then(response => {
@@ -179,11 +216,7 @@ export default {
           this.showModal = false;
         })
         .catch(error => {
-          console.log(error);
-          let errors = error.response.data.errors;
-          // if (errors.all_day) {
-
-          // }
+          this.$router.push({ path: "/" });
         });
     }
   }
@@ -191,6 +224,13 @@ export default {
 </script>
 
 <style>
+.error {
+  border: 1px solid #dc3545;
+}
+
+.errordate input {
+  border: 1px solid #dc3545;
+}
 /**
 *   Modal Box
 */

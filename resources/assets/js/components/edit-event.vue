@@ -48,8 +48,8 @@
                   </div>
                   <div class="col">
                     <select v-model="end_time" :disabled="event.all_day" class="custom-select time-select">
-                        <option :value="null" disabled>Select Time</option>
-                        <option v-for="t in time" v-bind:key="t">{{ t }}</option>
+                      <option :value="null" disabled>Select Time</option>
+                      <option v-for="t in time" v-bind:key="t">{{ t }}</option>
                     </select>
                   </div>
                 </div>
@@ -75,7 +75,6 @@
 <script>
 import DatePicker from "vue2-datepicker";
 import moment from "moment";
-
 import { EventBus } from "../app";
 
 export default {
@@ -114,25 +113,18 @@ export default {
     });
   },
   mounted: function() {
-    this.auth();
     this.initSelectBoxTime();
   },
   methods: {
     initSelectBoxTime() {
       this.time = [];
       let date = moment();
-
       var time = moment().startOf("day");
       var end = time.clone().endOf("day");
 
       while (time < end) {
         this.time.push(time.format("HH:mm").toString());
         time.add(30, "minutes");
-      }
-    },
-    auth() {
-      if (localStorage.getItem("token") === null) {
-        this.$router.push({ path: "/signin" });
       }
     },
     setTime(time, date) {
@@ -146,7 +138,7 @@ export default {
       return new Date(date).setHours(hours, min, 0);
     },
     updateEvent() {
-      const token = localStorage.getItem("token");
+      const token = this.$store.state.token;
 
       if (this.event.all_day) {
         this.event.start_date = this.setTime(null, this.event.start_date);
@@ -171,15 +163,15 @@ export default {
           all_day: this.event.all_day
         })
         .then(response => {
-          console.log(response);
-          // this.$router.push({ path: "/" });
           EventBus.$emit("eventChanged", {
             message: "Event Changed",
             event: this.event
           });
           this.showModal = false;
         })
-        .catch(error => console.log(error));
+        .catch(error => {
+          console.log(error);
+        });
     }
   }
 };

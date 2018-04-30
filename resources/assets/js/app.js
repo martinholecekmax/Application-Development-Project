@@ -14,30 +14,15 @@ window.Vue = require('vue');
  * the page. Then, you may begin adding components to this application
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
-// import VueRouter from 'vue-router';
+
 import router from './router';
-
 import App from './components/App.vue';
-
-// import Calendar from './components/calendar.vue';
-// import Signup from './components/signup.vue';
-// import Signin from './components/login.vue';
 import { store } from './store/store';
+import VeeValidate from 'vee-validate';
+
+Vue.use(VeeValidate);
 
 window.axios.defaults.baseURL = 'http://calendar.test/api/';
-
-// Vue.use(VueRouter);
-
-// const routes = [
-//     { path: '', component: Calendar },
-//     { path: '/signup', component: Signup },
-//     { path: '/signin', component: Signin }
-// ];
-
-// const router = new VueRouter({
-//     mode: 'history',
-//     routes: routes
-// });
 
 export const EventBus = new Vue();
 

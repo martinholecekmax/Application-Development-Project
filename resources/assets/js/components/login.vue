@@ -47,24 +47,6 @@ export default {
         .catch(err => {
           console.log(err);
         });
-      // axios
-      //   .post("/login", {
-      //     email: this.email,
-      //     password: this.password
-      //   })
-      //   .then(response => {
-      //     const token = response.data.access_token;
-      //     const base64Url = token.split(".")[1];
-      //     const base64 = base64Url.replace("-", "+").replace("_", "/");
-      //     console.log(JSON.parse(window.atob(base64)));
-      //     // localStorage.token = token;
-      //     localStorage.setItem("token", token);
-      //     this.$router.push({ path: "/" });
-      //   })
-      //   .catch(error => {
-      //     console.log(error.response.data);
-      //     this.error = error.response.data.error;
-      //   });
     }
   }
 };

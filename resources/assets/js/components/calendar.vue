@@ -30,7 +30,7 @@
     </div>
     <div id="message" class="alert alert-success mt-3" style="display:none;">{{message}}</div>
     <button class="btn btn-primary mr-2" v-on:click="showModal()">Create Event</button>
-    <button class="btn btn-primary" v-on:click="auth()">Show All Event</button>
+    <button class="btn btn-primary" v-on:click="showAllEvents()">Show All Event</button>
       <div v-for="event in eventsById" v-bind:key="event.id">
       <single-event :event="event"></single-event>
       </div>
@@ -46,7 +46,6 @@ import CreateEvent from "../components/create-event.vue";
 import EditEvent from "../components/edit-event.vue";
 import SingleEvent from "../components/event.vue";
 import jwt_decode from "jwt-decode";
-
 import { EventBus } from "../app";
 
 export default {
@@ -80,21 +79,21 @@ export default {
     EventBus.$on("eventCreated", data => {
       this.showMessage(data.message);
       $("#message").fadeIn();
-      $("#message").fadeOut(2000);
-      console.log(data.event);
+      $("#message").fadeToggle(2000);
       this.events.push(data.event);
     });
     EventBus.$on("eventChanged", data => {
       this.showMessage(data.message);
       $("#message").fadeIn();
-      $("#message").fadeOut(2000);
+      $("#message").fadeToggle(2000);
     });
     EventBus.$on("eventDeleted", data => {
       this.showMessage(data.message);
       $("#message").fadeIn();
-      $("#message").fadeOut(2000);
+      $("#message").fadeToggle(2000);
       let index = this.events.findIndex(el => el.id == data.event.id);
       this.events.splice(index, 1);
+      this.showAllEvents();
     });
   },
   mounted: function() {
@@ -107,11 +106,9 @@ export default {
       this.$store
         .dispatch("inspectToken")
         .then(result => {
-          console.log("get events");
           this.getAllEvents();
         })
         .catch(err => {
-          console.log("redirect to login");
           this.$router.push({ path: "/signin" });
         });
     },
@@ -124,8 +121,7 @@ export default {
           this.dayEvents = response.data.events;
         })
         .catch(error => {
-          console.log(error);
-          // this.$router.push({ path: "/signin" });
+          this.$router.push({ path: "/signin" });
         });
     },
     previousMonth() {
@@ -232,12 +228,15 @@ export default {
           });
         })
         .catch(err => {
-          console.log("redirect to login");
           this.$router.push({ path: "/signin" });
         });
     },
     showMessage(message) {
       this.message = message;
+    },
+    showAllEvents() {
+      this.auth();
+      this.title = "All Events";
     }
   },
   computed: {
@@ -247,41 +246,17 @@ export default {
     getDayOfMonth: function() {
       let date = new Date(this.year, this.month, 1);
       let days = [];
-      switch (date.getDay()) {
-        case 2:
+
+      if (date.getDay() >= 2 && date.getDay() <= 6) {
+        for (let index = 1; index < date.getDay(); index++) {
           days.push(0);
-          break;
-        case 3:
+        }
+      } else if (date.getDay() == 0) {
+        for (let index = 0; index < 6; index++) {
           days.push(0);
-          days.push(0);
-          break;
-        case 4:
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          break;
-        case 5:
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          break;
-        case 6:
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          break;
-        case 0:
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          days.push(0);
-          break;
+        }
       }
+
       while (date.getMonth() === this.month) {
         days.push(new Date(date).getDate());
         date.setDate(date.getDate() + 1);

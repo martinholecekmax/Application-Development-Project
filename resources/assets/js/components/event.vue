@@ -40,7 +40,6 @@
 <script>
 import moment from "moment";
 import EditEvent from "../components/edit-event.vue";
-
 import { EventBus } from "../app";
 
 export default {
@@ -61,23 +60,37 @@ export default {
       return moment(date).format("HH:mm");
     },
     editModal(event) {
-      EventBus.$emit("editEventButton", {
-        event: event
-      });
-    },
-    deleteEvent(event) {
-      const token = localStorage.getItem("token");
-      axios
-        .delete("/event/" + event.id + "?token=" + token)
-        .then(response => {
-          console.log(response);
-          // this.$router.push({ path: "/" });
-          EventBus.$emit("eventDeleted", {
-            message: "Event Deleted",
-            event: this.event
+      this.$store
+        .dispatch("inspectToken")
+        .then(result => {
+          EventBus.$emit("editEventButton", {
+            event: event
           });
         })
-        .catch(error => console.log(error));
+        .catch(err => {
+          this.$router.push({ path: "/signin" });
+        });
+    },
+    deleteEvent(event) {
+      const token = this.$store.state.token;
+      this.$store
+        .dispatch("inspectToken")
+        .then(result => {
+          axios
+            .delete("/event/" + event.id + "?token=" + token)
+            .then(response => {
+              EventBus.$emit("eventDeleted", {
+                message: "Event Deleted",
+                event: this.event
+              });
+            })
+            .catch(error => {
+              this.$router.push({ path: "/signin" });
+            });
+        })
+        .catch(err => {
+          this.$router.push({ path: "/signin" });
+        });
     }
   }
 };

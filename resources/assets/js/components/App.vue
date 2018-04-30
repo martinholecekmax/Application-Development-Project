@@ -1,23 +1,23 @@
 <template>
   <div id="app">
     <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
-        <router-link class="navbar-brand" to="/">Home</router-link>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav ml-auto">
-                <li class="navbar-item">
-                  <router-link v-if="!isUserLogin()" class="nav-link" to="/signup">Register</router-link>
-                </li>
-                <li class="navbar-item">
-                  <router-link v-if="!isUserLogin()" class="nav-link" to="/signin">Login</router-link>
-                </li>
-                <li class="navbar-item">
-                  <a class="nav-link" v-if="isUserLogin()" v-on:click="logout">Logout</a>
-                </li>
-            </ul>
-        </div>
+      <router-link class="navbar-brand" to="/">Home</router-link>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+          <li class="navbar-item">
+            <router-link v-if="!isUserLogin()" class="nav-link" to="/signup">Register</router-link>
+          </li>
+          <li class="navbar-item">
+            <router-link v-if="!isUserLogin()" class="nav-link" to="/signin">Login</router-link>
+          </li>
+          <li class="navbar-item">
+            <a class="nav-link" v-if="isUserLogin()" v-on:click="logout">Logout</a>
+          </li>
+        </ul>
+      </div>
     </nav>
     <div class="container-fluid mt-3">
       <div class="row">
@@ -36,7 +36,6 @@ export default {
   },
   updated() {
     if (!this.$store.state.token && this.$route.path !== "/signup") {
-      console.log("token app", this.$store.state.token);
       this.$router.push("/signin");
     }
   },

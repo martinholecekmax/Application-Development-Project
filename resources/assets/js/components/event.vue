@@ -8,24 +8,32 @@
   </div>
   <div class="card-body" v-if="show">
     <div class="card-text">
-        From: {{ printDate(event.start_date) }} -
-        To: {{ printDate(event.end_date) }}
-        <hr>
-        <div>
-          Description: {{ event.description }}
+      <div class="row">
+        <div class="col">
+          From: {{ printDate(event.start_date) }} -
+          To: {{ printDate(event.end_date) }}
         </div>
-        <div class="mt-2">
-          Location: {{ event.location }}
-        </div>
-        <hr>
-        <div class="mt-2">
-          All Day: {{ event.all_day }}
-        </div>
-        <hr>
-        <button class="btn btn-danger float-right ml-3" v-on:click="deleteEvent(event)">Delete</button>
-        <button class="btn btn-primary float-right" v-on:click="editModal(event)">Update</button>
       </div>
+      <div class="row">
+        <div class="col" v-if="!event.all_day">
+          {{printTime(event.start_date)}} -
+          {{printTime(event.end_date)}}
+        </div>
+        <div class="col" v-else>
+          All Day
+        </div>
+      </div>
+      <hr>
+        Description: {{ event.description }}
+      <hr>
+      <div class="mt-2">
+        Location: {{ event.location }}
+      </div>
+      <hr>
+      <button class="btn btn-danger float-right ml-3" v-on:click="deleteEvent(event)">Delete</button>
+      <button class="btn btn-primary float-right" v-on:click="editModal(event)">Update</button>
     </div>
+  </div>
 </div>
 </template>
 

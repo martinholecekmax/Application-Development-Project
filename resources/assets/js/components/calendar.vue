@@ -30,7 +30,7 @@
     </div>
     <div id="message" class="alert alert-success mt-3" style="display:none;">{{message}}</div>
     <button class="btn btn-primary mr-2" v-on:click="showModal()">Create Event</button>
-    <button class="btn btn-primary" v-on:click="getAllEvents()">Show All Event</button>
+    <button class="btn btn-primary" v-on:click="auth()">Show All Event</button>
       <div v-for="event in eventsById" v-bind:key="event.id">
       <single-event :event="event"></single-event>
       </div>
@@ -93,7 +93,7 @@ export default {
       this.showMessage(data.message);
       $("#message").fadeIn();
       $("#message").fadeOut(2000);
-      var index = this.events.findIndex(el => el.id == data.event.id);
+      let index = this.events.findIndex(el => el.id == data.event.id);
       this.events.splice(index, 1);
     });
   },
@@ -104,54 +104,28 @@ export default {
   },
   methods: {
     auth() {
-      if (localStorage.getItem("token") === null) {
-        this.$router.push({ path: "/signin" });
-      } else {
-        this.getAllEvents();
-      }
-      this.inspectToken();
-    },
-    inspectToken() {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const decoded = jwt_decode(token);
-        const exp = decoded.exp;
-        const orig_iat = decoded.iat;
-        const seven_days = 604800; // 7*24*60*60
-        const thirty_minutes = 1800; // 30*60
-
-        if (Date.now() / 1000 > exp) {
-          // IF TOKEN EXPIRED THEN SEND TO LOGIN PAGE
-          console.log("IF TOKEN EXPIRED THEN SEND TO LOGIN PAGE");
-          localStorage.clear();
+      this.$store
+        .dispatch("inspectToken")
+        .then(result => {
+          console.log("get events");
+          this.getAllEvents();
+        })
+        .catch(err => {
+          console.log("redirect to login");
           this.$router.push({ path: "/signin" });
-        } else if (
-          Date.now() / 1000 > exp - thirty_minutes &&
-          Date.now() / 1000 < orig_iat + seven_days
-        ) {
-          // IF TOKEN EXPIRE IN LESS THAN 30MN BUT STILL IN REFRESH PERIOD THEN REFRESH
-          console.log("Refresh token");
-          localStorage.clear();
-        }
-        console.log("token ok");
-      } else {
-        // NO TOKEN THEN SEND TO LOGIN PAGE
-        console.log("NO TOKEN THEN SEND TO LOGIN PAGE");
-        this.$router.push({ path: "/signin" });
-      }
+        });
     },
     getAllEvents() {
-      const token = localStorage.getItem("token");
+      const token = this.$store.state.token;
       axios
         .get("/events?token=" + token)
         .then(response => {
           this.events = response.data.events;
           this.dayEvents = response.data.events;
-          // console.log(this.events);
         })
         .catch(error => {
           console.log(error);
-          this.$router.push({ path: "/signin" });
+          // this.$router.push({ path: "/signin" });
         });
     },
     previousMonth() {
@@ -176,20 +150,20 @@ export default {
         .format("MMMM");
     },
     isEvent(day) {
-      var currentDate = new Date(this.year, this.month, day).setHours(
+      let currentDate = new Date(this.year, this.month, day).setHours(
         0,
         0,
         0,
         0
       );
-      for (var event in this.events) {
-        var eventStartDate = new Date(this.events[event].start_date).setHours(
+      for (let event in this.events) {
+        let eventStartDate = new Date(this.events[event].start_date).setHours(
           0,
           0,
           0,
           0
         );
-        var eventEndDate = new Date(this.events[event].end_date).setHours(
+        let eventEndDate = new Date(this.events[event].end_date).setHours(
           0,
           0,
           0,
@@ -206,26 +180,26 @@ export default {
       return false;
     },
     isToday(day) {
-      var date = new Date(this.year, this.month, day).setHours(0, 0, 0, 0);
-      var today = new Date().setHours(0, 0, 0, 0);
+      let date = new Date(this.year, this.month, day).setHours(0, 0, 0, 0);
+      let today = new Date().setHours(0, 0, 0, 0);
       return date === today;
     },
     showEvent(day) {
-      var currentDate = new Date(this.year, this.month, day).setHours(
+      let currentDate = new Date(this.year, this.month, day).setHours(
         0,
         0,
         0,
         0
       );
-      var currentDayEvents = [];
-      for (var event in this.events) {
-        var eventStartDate = new Date(this.events[event].start_date).setHours(
+      let currentDayEvents = [];
+      for (let event in this.events) {
+        let eventStartDate = new Date(this.events[event].start_date).setHours(
           0,
           0,
           0,
           0
         );
-        var eventEndDate = new Date(this.events[event].end_date).setHours(
+        let eventEndDate = new Date(this.events[event].end_date).setHours(
           0,
           0,
           0,
@@ -250,10 +224,17 @@ export default {
       return moment(date).format("HH:mm");
     },
     showModal() {
-      this.inspectToken();
-      EventBus.$emit("createEventButton", {
-        day: this.daySelected
-      });
+      this.$store
+        .dispatch("inspectToken")
+        .then(result => {
+          EventBus.$emit("createEventButton", {
+            day: this.daySelected
+          });
+        })
+        .catch(err => {
+          console.log("redirect to login");
+          this.$router.push({ path: "/signin" });
+        });
     },
     showMessage(message) {
       this.message = message;
@@ -264,8 +245,8 @@ export default {
       return _.orderBy(this.dayEvents, "id", "desc");
     },
     getDayOfMonth: function() {
-      var date = new Date(this.year, this.month, 1);
-      var days = [];
+      let date = new Date(this.year, this.month, 1);
+      let days = [];
       switch (date.getDay()) {
         case 2:
           days.push(0);

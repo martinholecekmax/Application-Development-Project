@@ -10,30 +10,54 @@
             </div>
               <form>
             <div class="modal-body">
-                <div class="form-group">
-                  <label for="title">Title</label>
-                  <input type="title" id="title" name="title" class="form-control" v-model="event.title">
+              <div class="form-group">
+                <label for="title">Title</label>
+                <input type="title" id="title" name="title" class="form-control" v-model="event.title">
+              </div>
+              <div class="form-group">
+                <label for="description">Description</label>
+                <input type="description" id="description" name="description" class="form-control" v-model="event.description">
+              </div>
+              <div class="form-group">
+                <label for="location">Location</label>
+                <input type="location" id="location" name="location" class="form-control" v-model="event.location">
+              </div>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col">
+                    <label for="start_date">Start date</label>
+                  </div>
+                  <div class="col">
+                    <date-picker class="" v-model="event.start_date" :first-day-of-week="1" lang="en"></date-picker>
+                  </div>
+                  <div class="col">
+                  <select v-model="start_time" :disabled="event.all_day" class="custom-select time-select">
+                      <option :value="null" disabled>Select Time</option>
+                      <option v-for="t in time" v-bind:key="t">{{ t }}</option>
+                  </select>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label for="description">Description</label>
-                  <input type="description" id="description" name="description" class="form-control" v-model="event.description">
+              </div>
+              <div class="form-group">
+                <div class="form-row">
+                  <div class="col">
+                    <label for="end_date">End date</label>
+                  </div>
+                  <div class="col">
+                    <date-picker class="float-right" v-model="event.end_date" :first-day-of-week="1" lang="en"></date-picker>
+                  </div>
+                  <div class="col">
+                    <select v-model="end_time" :disabled="event.all_day" class="custom-select time-select">
+                        <option :value="null" disabled>Select Time</option>
+                        <option v-for="t in time" v-bind:key="t">{{ t }}</option>
+                    </select>
+                  </div>
                 </div>
-                <div class="form-group">
-                  <label for="location">Location</label>
-                  <input type="location" id="location" name="location" class="form-control" v-model="event.location">
-                </div>
-                <div class="form-group">
-                  <label for="start_date">Start date</label>
-                  <date-picker class="float-right" v-model="event.start_date" :first-day-of-week="1" lang="en"></date-picker>
-                </div>
-                <div class="form-group">
-                  <label for="end_date">End date</label>
-                  <date-picker class="float-right" v-model="event.end_date" :first-day-of-week="1" lang="en"></date-picker>
-               </div>
-                <div class="form-group mb-0">
-                  <input type="checkbox" id="checkbox" v-model="event.all_day">
-                  <label for="checkbox">All Day</label>
-                </div>
+              </div>
+              <div class="form-group mb-0">
+                <input type="checkbox" id="checkbox" v-model="event.all_day">
+                <label for="checkbox">All Day</label>
+              </div>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary mr-2" @click.prevent="updateEvent">Update Event</button>
@@ -59,6 +83,9 @@ export default {
   data() {
     return {
       event: {},
+      time: [],
+      start_time: null,
+      end_time: null,
       showModal: false,
       shortcuts: [
         {
@@ -73,23 +100,65 @@ export default {
     EventBus.$on("editEventButton", data => {
       this.showModal = true;
       this.event = data.event;
+      this.start_time = moment(data.event.start_date)
+        .format("HH:mm")
+        .toString();
+      this.end_time = moment(data.event.end_date)
+        .format("HH:mm")
+        .toString();
+      if (this.event.all_day == 0) {
+        this.event.all_day = false;
+      } else if (this.event.all_day == 1) {
+        this.event.all_day = true;
+      }
     });
   },
   mounted: function() {
     this.auth();
+    this.initSelectBoxTime();
   },
   methods: {
+    initSelectBoxTime() {
+      this.time = [];
+      let date = moment();
+
+      var time = moment().startOf("day");
+      var end = time.clone().endOf("day");
+
+      while (time < end) {
+        this.time.push(time.format("HH:mm").toString());
+        time.add(30, "minutes");
+      }
+    },
     auth() {
       if (localStorage.getItem("token") === null) {
         this.$router.push({ path: "/signin" });
       }
     },
+    setTime(time, date) {
+      let hours = 0;
+      let min = 0;
+      if (time) {
+        let index = time.indexOf(":");
+        hours = time.substring(0, index);
+        min = time.substring(index + 1, date.length);
+      }
+      return new Date(date).setHours(hours, min, 0);
+    },
     updateEvent() {
       const token = localStorage.getItem("token");
-      if (this.all_day) {
-        console.log(this.start_date);
-        console.log(this.end_date);
+
+      if (this.event.all_day) {
+        this.event.start_date = this.setTime(null, this.event.start_date);
+        this.event.end_date = this.setTime(null, this.event.end_date);
+      } else {
+        this.event.start_date = this.setTime(
+          this.start_time,
+          this.event.start_date
+        );
+        this.event.end_date = this.setTime(this.end_time, this.event.end_date);
       }
+
       axios
         .patch("/event/" + this.event.id + "?token=" + token, {
           title: this.event.title,

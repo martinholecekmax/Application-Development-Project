@@ -30,62 +30,23 @@
 </template>
 
 <script>
-import jwt_decode from "jwt-decode";
-
 export default {
   data() {
     return {};
   },
   updated() {
-    if (!localStorage.getItem("token") && this.$route.path !== "/signup") {
+    if (!this.$store.state.token && this.$route.path !== "/signup") {
+      console.log("token app", this.$store.state.token);
       this.$router.push("/signin");
     }
   },
   methods: {
     logout() {
-      localStorage.removeItem("token");
+      this.$store.commit("removeToken");
       this.$router.push({ path: "/signin" });
     },
-    inspectToken() {
-      const token = localStorage.getItem("token");
-      if (token) {
-        const decoded = jwt_decode(token);
-        const exp = decoded.exp;
-        const orig_iat = decoded.iat;
-        const seven_days = 604800; // 7*24*60*60
-        const thirty_minutes = 1800; // 30*60
-
-        if (Date.now() / 1000 > exp) {
-          // IF TOKEN EXPIRED CLEAR LOCAL STORAGE
-          localStorage.clear();
-        } else if (
-          Date.now() / 1000 > exp - thirty_minutes &&
-          Date.now() / 1000 < orig_iat + seven_days
-        ) {
-          console.log("refresh token");
-          // IF TOKEN EXPIRE IN LESS THAN 30MN BUT STILL IN REFRESH PERIOD THEN REFRESH
-          this.refreshToken();
-        }
-        console.log("token ok");
-      } else {
-        // NO TOKEN SET THEN CLEAR LOCAL STORAGE
-      }
-    },
     isUserLogin() {
-      this.inspectToken();
-      return localStorage.getItem("token");
-    },
-    refreshToken() {
-      const token = localStorage.getItem("token");
-      axios
-        .post("/refresh?token=" + token)
-        .then(response => {
-          console.log("Refresh token");
-          console.log(this.response);
-        })
-        .catch(error => {
-          console.log(error);
-        });
+      return this.$store.state.token;
     }
   }
 };

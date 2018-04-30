@@ -26,9 +26,10 @@ class EventController extends Controller
      */
     public function index()
     {
-        $events = Event::all();
+        $events = Event::where('user_id', auth()->user()->id)->get();
         $response = [
-            'events' => $events
+            'events' => $events,
+            'user' => auth()->user()->id
         ];
         // $events = Event::paginate(15);
         return response()->json($response, 200);
@@ -49,7 +50,7 @@ class EventController extends Controller
             'location' => 'required',
             'start_date' => 'required|date_format:Y-m-d H:i:s',
             'end_date' => 'required|date_format:Y-m-d H:i:s',
-            'all_day' => 'accepted',
+            'all_day' => 'boolean',
         ]);
 
         $user = JWTAuth::parseToken()->toUser();

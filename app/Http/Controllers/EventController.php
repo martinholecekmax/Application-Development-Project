@@ -31,9 +31,7 @@ class EventController extends Controller
             'events' => $events,
             'user' => auth()->user()->id
         ];
-        // $events = Event::paginate(15);
         return response()->json($response, 200);
-        // return EventResource::collection($events);
     }
 
     /**

@@ -39,17 +39,14 @@
 
 <script>
 import moment from "moment";
-import EditEvent from "../components/edit-event.vue";
 import { EventBus } from "../app";
 
 export default {
-  components: {
-    "edit-event": EditEvent
-  },
   props: ["event"],
   data() {
     return {
-      show: false
+      show: false,
+      eventCopy: null
     };
   },
   methods: {
@@ -64,7 +61,7 @@ export default {
         .dispatch("inspectToken")
         .then(result => {
           EventBus.$emit("editEventButton", {
-            event: event
+            event: Vue.util.extend({}, this.event)
           });
         })
         .catch(err => {

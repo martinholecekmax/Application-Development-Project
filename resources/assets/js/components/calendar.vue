@@ -57,8 +57,8 @@ export default {
   data() {
     return {
       title: "All Events",
-      daySelected: "",
-      message: "",
+      daySelected: null,
+      message: null,
       dayEvents: [],
       events: [],
       days: [],
@@ -86,6 +86,10 @@ export default {
       this.showMessage(data.message);
       $("#message").fadeIn();
       $("#message").fadeToggle(2000);
+      let index = this.events.findIndex(el => el.id == data.event.id);
+      this.events.splice(index, 1, data.event);
+      index = this.dayEvents.findIndex(el => el.id == data.event.id);
+      this.dayEvents.splice(index, 1, data.event);
     });
     EventBus.$on("eventDeleted", data => {
       this.showMessage(data.message);
@@ -223,9 +227,7 @@ export default {
       this.$store
         .dispatch("inspectToken")
         .then(result => {
-          EventBus.$emit("createEventButton", {
-            day: this.daySelected
-          });
+          EventBus.$emit("createEventButton");
         })
         .catch(err => {
           this.$router.push({ path: "/signin" });

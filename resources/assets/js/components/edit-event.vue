@@ -12,15 +12,18 @@
             <div class="modal-body">
               <div class="form-group">
                 <label for="title">Title</label>
-                <input type="title" id="title" name="title" class="form-control" v-model="event.title">
+                <input type="title" id="title" name="title" class="form-control" :class="{error: errors.has('title')}" v-model="event.title" v-validate="'required'">
+                <span class="text-danger" v-show="errors.has('title')">{{errors.first('title')}}</span>
               </div>
               <div class="form-group">
                 <label for="description">Description</label>
-                <input type="description" id="description" name="description" class="form-control" v-model="event.description">
+                <input type="description" id="description" name="description" class="form-control" :class="{error: errors.has('description')}" v-model="event.description" v-validate="'required'">
+                <span class="text-danger" v-show="errors.has('description')">{{errors.first('description')}}</span>
               </div>
               <div class="form-group">
                 <label for="location">Location</label>
-                <input type="location" id="location" name="location" class="form-control" v-model="event.location">
+                <input type="location" id="location" name="location" class="form-control" :class="{error: errors.has('location')}" v-model="event.location" v-validate="'required'">
+                <span class="text-danger" v-show="errors.has('location')">{{errors.first('location')}}</span>
               </div>
               <div class="form-group">
                 <div class="form-row">
@@ -28,7 +31,7 @@
                     <label for="start_date">Start date</label>
                   </div>
                   <div class="col">
-                    <date-picker class="" v-model="event.start_date" :first-day-of-week="1" lang="en"></date-picker>
+                    <date-picker :class="{errordate: errors.has('startdate')}" v-model="event.start_date" :first-day-of-week="1" lang="en"></date-picker>
                   </div>
                   <div class="col">
                   <select v-model="start_time" :disabled="event.all_day" class="custom-select time-select">
@@ -44,7 +47,7 @@
                     <label for="end_date">End date</label>
                   </div>
                   <div class="col">
-                    <date-picker class="float-right" v-model="event.end_date" :first-day-of-week="1" lang="en"></date-picker>
+                    <date-picker :class="{errordate: errors.has('enddate')}" v-model="event.end_date" :first-day-of-week="1" lang="en"></date-picker>
                   </div>
                   <div class="col">
                     <select v-model="end_time" :disabled="event.all_day" class="custom-select time-select">
@@ -61,7 +64,7 @@
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary mr-2" @click.prevent="updateEvent">Update Event</button>
-              <button class="btn btn-outline-secondary" v-on:click.prevent="showModal = false">Cancel</button>
+              <button class="btn btn-outline-secondary" v-on:click.prevent="cancelModal">Cancel</button>
             </div>
               </form>
           </div>
@@ -81,7 +84,7 @@ export default {
   components: { DatePicker },
   data() {
     return {
-      event: {},
+      event: null,
       time: [],
       start_time: null,
       end_time: null,
@@ -97,6 +100,7 @@ export default {
   },
   created() {
     EventBus.$on("editEventButton", data => {
+      this.errors.clear();
       this.showModal = true;
       this.event = data.event;
       this.start_time = moment(data.event.start_date)
@@ -116,6 +120,9 @@ export default {
     this.initSelectBoxTime();
   },
   methods: {
+    cancelModal() {
+      this.showModal = false;
+    },
     initSelectBoxTime() {
       this.time = [];
       let date = moment();
@@ -137,9 +144,7 @@ export default {
       }
       return new Date(date).setHours(hours, min, 0);
     },
-    updateEvent() {
-      const token = this.$store.state.token;
-
+    setDates() {
       if (this.event.all_day) {
         this.event.start_date = this.setTime(null, this.event.start_date);
         this.event.end_date = this.setTime(null, this.event.end_date);
@@ -150,16 +155,52 @@ export default {
         );
         this.event.end_date = this.setTime(this.end_time, this.event.end_date);
       }
+    },
+    validation() {
+      let validate = true;
+      if (this.event.start_date == null || this.event.start_date == "") {
+        this.errors.add("startdate", "Start date is requred");
+        validate = false;
+      } else {
+        this.errors.remove("startdate");
+      }
+
+      if (this.event.end_date == null || this.event.end_date == "") {
+        this.errors.add("enddate", "End date is requred");
+        validate = false;
+      } else {
+        this.errors.remove("enddate");
+      }
+
+      return validate;
+    },
+    updateEvent() {
+      if (this.validation()) {
+        this.setDates();
+      }
+      this.$validator.validateAll().then(success => {
+        if (!this.errors.any()) {
+          this.sendEvent();
+        }
+      });
+    },
+    sendEvent() {
+      const token = this.$store.state.token;
+      let start_date = moment(this.event.start_date).format(
+        "YYYY-MM-DD HH:mm:ss"
+      );
+      let end_date = moment(this.event.end_date).format("YYYY-MM-DD HH:mm:ss");
+
+      this.event.start_date = start_date;
+      this.event.end_date = end_date;
 
       axios
         .patch("/event/" + this.event.id + "?token=" + token, {
           title: this.event.title,
           description: this.event.description,
           location: this.event.location,
-          start_date: moment(this.event.start_date).format(
-            "YYYY-MM-DD HH:mm:ss"
-          ),
-          end_date: moment(this.event.end_date).format("YYYY-MM-DD HH:mm:ss"),
+          start_date: start_date,
+          end_date: end_date,
           all_day: this.event.all_day
         })
         .then(response => {
@@ -178,6 +219,14 @@ export default {
 </script>
 
 <style>
+.error {
+  border: 1px solid #dc3545;
+}
+
+.errordate input {
+  border: 1px solid #dc3545;
+}
+
 /**
 *   Modal Box
 */

@@ -3,7 +3,7 @@ import VueRouter from 'vue-router';
 import Calendar from './components/calendar.vue';
 import Signup from './components/signup.vue';
 import Signin from './components/login.vue';
-import NotFoundComponent from './components/NotFoundComponent.vue';
+import NotFoundComponent from './components/page-not-found.vue';
 
 Vue.use(VueRouter);
 

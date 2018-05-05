@@ -157,21 +157,21 @@ export default {
         this.setDates();
       }
       this.$validator.validateAll().then(success => {
-        if (success) {
+        if (!this.errors.any()) {
           this.sendEvent();
         }
       });
     },
     validation() {
       let validate = true;
-      if (this.start_date == null) {
+      if (this.start_date == null || this.start_date == "") {
         this.errors.add("startdate", "Start date is requred");
         validate = false;
       } else {
         this.errors.remove("startdate");
       }
 
-      if (this.start_time == null) {
+      if (this.start_time == null || this.end_date == "") {
         this.errors.add("starttime", "Start time is requred");
         validate = false;
       } else {

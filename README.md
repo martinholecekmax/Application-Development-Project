@@ -13,7 +13,7 @@ $ npm install
 ```
 
 ## Setup Database Connection
-  In your `.env` file edit connection to the :
+  In your `.env` file edit:
 
 ```ini
 DB_HOST=127.0.0.1

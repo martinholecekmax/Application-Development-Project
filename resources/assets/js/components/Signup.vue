@@ -27,6 +27,7 @@
           <input type="password" id="password_confirmation" name="password_confirmation" class="form-control" :class="{error: errors.has('password_confirmation')}" v-model="match" v-validate="'required|min:8|confirmed:password'" data-vv-as="password">
           <span class="text-danger" v-show="errors.has('password_confirmation')">{{errors.first('password_confirmation')}}</span>
         </div>
+          <div v-if="error" class="alert alert-danger">{{error}}</div>
           <button type="submit" class="btn btn-primary" @click.prevent="signup">Register</button>
         </div>
       </div>
@@ -42,7 +43,8 @@ export default {
       username: null,
       email: null,
       password: null,
-      match: null
+      match: null,
+      error: null
     };
   },
   methods: {
@@ -59,7 +61,7 @@ export default {
               this.$router.push({ path: "/signin" });
             })
             .catch(err => {
-              console.log(err);
+              this.error = err.response.data.error;
             });
         }
       });

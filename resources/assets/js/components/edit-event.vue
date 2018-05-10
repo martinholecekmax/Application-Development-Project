@@ -211,7 +211,7 @@ export default {
           this.showModal = false;
         })
         .catch(error => {
-          console.log(error);
+          this.$router.push({ path: "/" });
         });
     }
   }

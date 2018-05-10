@@ -22,7 +22,14 @@ import VeeValidate from 'vee-validate';
 
 Vue.use(VeeValidate);
 
+// localhost URL
+// window.axios.defaults.baseURL = 'http://localhost/jwt/public/api/';
+
+// Virtual host URL
 window.axios.defaults.baseURL = 'http://calendar.test/api/';
+
+// Online Hosting URL
+// window.axios.defaults.baseURL = 'http://martinholecekmax.site/api/';
 
 export const EventBus = new Vue();
 

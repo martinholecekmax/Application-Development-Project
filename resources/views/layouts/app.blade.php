@@ -30,12 +30,11 @@
 </head>
 
 <body>
-    {{-- Insert Navbar --}}
-    <!-- @include('inc.navbar')  -->
+    {{-- Insert Content  --}}
+    @yield('content')
 
-    {{-- Display Error Messages --}}
-    @include('inc.messages') {{-- Insert Content
-    --}} @yield('content') {{-- Insert additional scripts --}} @yield('scripts')
+    {{-- Insert additional scripts --}}
+    @yield('scripts')
 </body>
 
 </html>

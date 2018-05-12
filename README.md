@@ -86,7 +86,7 @@ In your file system, find the file `hosts` which is located inside the `C:\Windo
 ```
 127.0.0.1	calendar.test
 ```
-### Apache server inside the XAMPP Control Panel must be restarted otherwise those changes will not be applied.
+#### Apache server inside the XAMPP Control Panel must be restarted otherwise those changes will not be applied.
 
 
 

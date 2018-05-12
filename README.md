@@ -65,6 +65,7 @@ window.axios.defaults.baseURL = 'http://localhost/Application-Development-Projec
 * Issues – There might occur some issues with links if the virtual host is used set up due to Vue Routing. For this reason, using virtual host is recommended.
 
 ## Setting up Virtual Host
+### Edit Virtual Hosts Config file
 In your file system, find the file `httpd-vhosts.conf` inside `C:\xampp\apache\conf\extra` folder. If you installed [XAMPP](https://www.apachefriends.org/index.html) into different folder the path of this folder will be different.
 
 At the end of this file, add the code below.
@@ -78,13 +79,14 @@ At the end of this file, add the code below.
 * ServerName variable is the URL which must be the same as URL inside `app.js` file.
 * You should also replace “DocumentRoot” path with the location your of project in the case that path is different.
 
+### Edit Hosts file
 In your file system, find the file `hosts` which is located inside the `C:\Windows\System32\drivers\etc` folder and add the line underneath at the end of this file.
 
 * Before you open the file, make sure that you open it as the Administrator otherwise you will not be able to edit this file.
 ```
 127.0.0.1	calendar.test
 ```
-Restart Apache server inside the XAMPP Control Panel.
+### Apache server inside the XAMPP Control Panel must be restarted otherwise those changes will not be applied.
 
 
 

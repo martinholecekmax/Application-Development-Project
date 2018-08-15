@@ -1,8 +1,6 @@
 # Application-Development-Project
 Application Development Assignment 
 
-This demo app is deployed at [martinholecek.site](http://martinholecekmax.site)
-
 ## Installation
 This project requires to install [Node.js](https://nodejs.org/) and
 [NPM](https://npmjs.org/) before using bash commands.
